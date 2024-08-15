@@ -1,0 +1,1 @@
+var json_KantorKapanewonMinggir_11 = {"type":"FeatureCollection","name":"KantorKapanewonMinggir_11","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"Nama":"Kantor Kapanewon Minggir"},"geometry":{"type":"Point","coordinates":[110.234807401505677,-7.725514603968153]}}]}

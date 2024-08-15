@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+    <link rel="stylesheet" href="css/fasum_style.css">
+    <link rel="stylesheet" href="css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="../../../img/icon-title.png" type="image/png">
+    <title>Peta Sendangagung | Persebaran Fasilitas Umum</title>
+    <style>
+        #map {
+            width: auto;
+            height: 80vh;
+        }
+    </style>
+</head>
+
+<body>
+    <nav><button id="kembali-button">Kembali</button>
+    </nav>
+    <div class="title">
+        <h1>PETA PERSEBARAN FASILITAS UMUM</h1>
+    </div>
+    <div class="border-map">
+        <div id="map">
+        </div>
+    </div>
+    <div class="footer">
+        &copy; 2024 Desa Sendangagung, Kecamatan Minggir, Kabupaten Sleman
+    </div>
+    <script>
+        document.getElementById("kembali-button").addEventListener("click", function () {
+            history.back();
+        });
+    </script>
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/L.Control.Locate.min.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+    <script src="data/BatasPadukuhanSendangagung_3.js"></script>
+    <script src="data/Makam_4.js"></script>
+    <script src="data/BalaiPendopo_5.js"></script>
+    <script src="data/Gereja_6.js"></script>
+    <script src="data/MasjidMusholla_7.js"></script>
+    <script src="data/FasilitasEkonomi_8.js"></script>
+    <script src="data/FasilitasKeamanan_9.js"></script>
+    <script src="data/FasilitasKesehatan_10.js"></script>
+    <script src="data/KantorKapanewonMinggir_11.js"></script>
+    <script src="data/KantorKalurahanSendangagung_12.js"></script>
+    <script src="data/FasilitasPendidikan_13.js"></script>
+    <script src="data/FasilitasRekreasiOlahraga_14.js"></script>
+    <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl: true, maxZoom: 28, minZoom: 1
+        }).fitBounds([[-7.746542683078344, 110.19060867171207], [-7.703268938835874, 110.28253581965883]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({ truncate: { length: 30, location: 'smart' } });
+        L.control.locate({ locateOptions: { maxZoom: 19 } }).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_OSMStandard_0');
+        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
+        map.createPane('pane_GoogleMaps_1');
+        map.getPane('pane_GoogleMaps_1').style.zIndex = 401;
+        var layer_GoogleMaps_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleMaps_1',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_GoogleMaps_1;
+        map.addLayer(layer_GoogleMaps_1);
+        map.createPane('pane_GoogleEarth_2');
+        map.getPane('pane_GoogleEarth_2').style.zIndex = 402;
+        var layer_GoogleEarth_2 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleEarth_2',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_GoogleEarth_2;
+        map.addLayer(layer_GoogleEarth_2);
+        function pop_BatasPadukuhanSendangagung_3(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">fid</th>\
+                        <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">OBJECTID</th>\
+                        <td>' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Shape_Leng</th>\
+                        <td>' + (feature.properties['Shape_Leng'] !== null ? autolinker.link(feature.properties['Shape_Leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Shape_Area</th>\
+                        <td>' + (feature.properties['Shape_Area'] !== null ? autolinker.link(feature.properties['Shape_Area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Padukuhan</th>\
+                        <td>' + (feature.properties['Padukuhan'] !== null ? autolinker.link(feature.properties['Padukuhan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_BatasPadukuhanSendangagung_3_0() {
+            return {
+                pane: 'pane_BatasPadukuhanSendangagung_3',
+                opacity: 1,
+                color: 'rgba(45,245,72,1.0)',
+                dashArray: '10,5',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BatasPadukuhanSendangagung_3');
+        map.getPane('pane_BatasPadukuhanSendangagung_3').style.zIndex = 403;
+        map.getPane('pane_BatasPadukuhanSendangagung_3').style['mix-blend-mode'] = 'normal';
+        var layer_BatasPadukuhanSendangagung_3 = new L.geoJson(json_BatasPadukuhanSendangagung_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BatasPadukuhanSendangagung_3',
+            layerName: 'layer_BatasPadukuhanSendangagung_3',
+            pane: 'pane_BatasPadukuhanSendangagung_3',
+            onEachFeature: pop_BatasPadukuhanSendangagung_3,
+            style: style_BatasPadukuhanSendangagung_3_0,
+        });
+        bounds_group.addLayer(layer_BatasPadukuhanSendangagung_3);
+        map.addLayer(layer_BatasPadukuhanSendangagung_3);
+        function pop_Makam_4(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Id</th>\
+                        <td>' + (feature.properties['Id'] !== null ? autolinker.link(feature.properties['Id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Padukuhan</th>\
+                        <td>' + (feature.properties['Padukuhan'] !== null ? autolinker.link(feature.properties['Padukuhan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Nama_Fasum</th>\
+                        <td>' + (feature.properties['Nama_Fasum'] !== null ? autolinker.link(feature.properties['Nama_Fasum'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_Makam_4_0() {
+            return {
+                pane: 'pane_Makam_4',
+                rotationAngle: 0.0,
+                rotationOrigin: 'center center',
+                icon: L.icon({
+                    iconUrl: 'markers/makam.svg',
+                    iconSize: [15.2, 15.2]
+                }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Makam_4');
+        map.getPane('pane_Makam_4').style.zIndex = 404;
+        map.getPane('pane_Makam_4').style['mix-blend-mode'] = 'normal';
+        var layer_Makam_4 = new L.geoJson(json_Makam_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Makam_4',
+            layerName: 'layer_Makam_4',
+            pane: 'pane_Makam_4',
+            onEachFeature: pop_Makam_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_Makam_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Makam_4);
+        map.addLayer(layer_Makam_4);
+        function pop_BalaiPendopo_5(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Id</th>\
+                        <td>' + (feature.properties['Id'] !== null ? autolinker.link(feature.properties['Id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Padukuhan</th>\
+                        <td>' + (feature.properties['Padukuhan'] !== null ? autolinker.link(feature.properties['Padukuhan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Nama_Fasum</th>\
+                        <td>' + (feature.properties['Nama_Fasum'] !== null ? autolinker.link(feature.properties['Nama_Fasum'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_BalaiPendopo_5_0() {
+            return {
+                pane: 'pane_BalaiPendopo_5',
+                rotationAngle: 0.0,
+                rotationOrigin: 'center center',
+                icon: L.icon({
+                    iconUrl: 'markers/balai.svg',
+                    iconSize: [15.2, 15.2]
+                }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BalaiPendopo_5');
+        map.getPane('pane_BalaiPendopo_5').style.zIndex = 405;
+        map.getPane('pane_BalaiPendopo_5').style['mix-blend-mode'] = 'normal';
+        var layer_BalaiPendopo_5 = new L.geoJson(json_BalaiPendopo_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BalaiPendopo_5',
+            layerName: 'layer_BalaiPendopo_5',
+            pane: 'pane_BalaiPendopo_5',
+            onEachFeature: pop_BalaiPendopo_5,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_BalaiPendopo_5_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_BalaiPendopo_5);
+        map.addLayer(layer_BalaiPendopo_5);
+        function pop_Gereja_6(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Id</th>\
+                        <td>' + (feature.properties['Id'] !== null ? autolinker.link(feature.properties['Id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Padukuhan</th>\
+                        <td>' + (feature.properties['Padukuhan'] !== null ? autolinker.link(feature.properties['Padukuhan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Nama</th>\
+                        <td>' + (feature.properties['Nama'] !== null ? autolinker.link(feature.properties['Nama'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_Gereja_6_0() {
+            return {
+                pane: 'pane_Gereja_6',
+                rotationAngle: 0.0,
+                rotationOrigin: 'center center',
+                icon: L.icon({
+                    iconUrl: 'markers/GEREJA.svg',
+                    iconSize: [15.2, 15.2]
+                }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Gereja_6');
+        map.getPane('pane_Gereja_6').style.zIndex = 406;
+        map.getPane('pane_Gereja_6').style['mix-blend-mode'] = 'normal';
+        var layer_Gereja_6 = new L.geoJson(json_Gereja_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Gereja_6',
+            layerName: 'layer_Gereja_6',
+            pane: 'pane_Gereja_6',
+            onEachFeature: pop_Gereja_6,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_Gereja_6_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Gereja_6);
+        map.addLayer(layer_Gereja_6);
+        function pop_MasjidMusholla_7(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Id</th>\
+                        <td>' + (feature.properties['Id'] !== null ? autolinker.link(feature.properties['Id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Padukuhan</th>\
+                        <td>' + (feature.properties['Padukuhan'] !== null ? autolinker.link(feature.properties['Padukuhan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Nama</th>\
+                        <td>' + (feature.properties['Nama'] !== null ? autolinker.link(feature.properties['Nama'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_MasjidMusholla_7_0() {
+            return {
+                pane: 'pane_MasjidMusholla_7',
+                rotationAngle: 0.0,
+                rotationOrigin: 'center center',
+                icon: L.icon({
+                    iconUrl: 'markers/masjid4.svg',
+                    iconSize: [15.2, 15.2]
+                }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_MasjidMusholla_7');
+        map.getPane('pane_MasjidMusholla_7').style.zIndex = 407;
+        map.getPane('pane_MasjidMusholla_7').style['mix-blend-mode'] = 'normal';
+        var layer_MasjidMusholla_7 = new L.geoJson(json_MasjidMusholla_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_MasjidMusholla_7',
+            layerName: 'layer_MasjidMusholla_7',
+            pane: 'pane_MasjidMusholla_7',
+            onEachFeature: pop_MasjidMusholla_7,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_MasjidMusholla_7_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_MasjidMusholla_7);
+        map.addLayer(layer_MasjidMusholla_7);
+        function pop_FasilitasEkonomi_8(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Id</th>\
+                        <td>' + (feature.properties['Id'] !== null ? autolinker.link(feature.properties['Id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Padukuhan</th>\
+                        <td>' + (feature.properties['Padukuhan'] !== null ? autolinker.link(feature.properties['Padukuhan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Nama_Fasum</th>\
+                        <td>' + (feature.properties['Nama_Fasum'] !== null ? autolinker.link(feature.properties['Nama_Fasum'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_FasilitasEkonomi_8_0() {
+            return {
+                pane: 'pane_FasilitasEkonomi_8',
+                rotationAngle: 0.0,
+                rotationOrigin: 'center center',
+                icon: L.icon({
+                    iconUrl: 'markers/ekonomi.svg',
+                    iconSize: [15.2, 15.2]
+                }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_FasilitasEkonomi_8');
+        map.getPane('pane_FasilitasEkonomi_8').style.zIndex = 408;
+        map.getPane('pane_FasilitasEkonomi_8').style['mix-blend-mode'] = 'normal';
+        var layer_FasilitasEkonomi_8 = new L.geoJson(json_FasilitasEkonomi_8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FasilitasEkonomi_8',
+            layerName: 'layer_FasilitasEkonomi_8',
+            pane: 'pane_FasilitasEkonomi_8',
+            onEachFeature: pop_FasilitasEkonomi_8,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_FasilitasEkonomi_8_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_FasilitasEkonomi_8);
+        map.addLayer(layer_FasilitasEkonomi_8);
+        function pop_FasilitasKeamanan_9(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Name</th>\
+                        <td>' + (feature.properties['Name'] !== null ? autolinker.link(feature.properties['Name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Padukuhan</th>\
+                        <td>' + (feature.properties['Padukuhan'] !== null ? autolinker.link(feature.properties['Padukuhan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_FasilitasKeamanan_9_0() {
+            return {
+                pane: 'pane_FasilitasKeamanan_9',
+                rotationAngle: 0.0,
+                rotationOrigin: 'center center',
+                icon: L.icon({
+                    iconUrl: 'markers/keamanan.svg',
+                    iconSize: [15.2, 15.2]
+                }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_FasilitasKeamanan_9');
+        map.getPane('pane_FasilitasKeamanan_9').style.zIndex = 409;
+        map.getPane('pane_FasilitasKeamanan_9').style['mix-blend-mode'] = 'normal';
+        var layer_FasilitasKeamanan_9 = new L.geoJson(json_FasilitasKeamanan_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FasilitasKeamanan_9',
+            layerName: 'layer_FasilitasKeamanan_9',
+            pane: 'pane_FasilitasKeamanan_9',
+            onEachFeature: pop_FasilitasKeamanan_9,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_FasilitasKeamanan_9_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_FasilitasKeamanan_9);
+        map.addLayer(layer_FasilitasKeamanan_9);
+        function pop_FasilitasKesehatan_10(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Id</th>\
+                        <td>' + (feature.properties['Id'] !== null ? autolinker.link(feature.properties['Id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Padukuhan</th>\
+                        <td>' + (feature.properties['Padukuhan'] !== null ? autolinker.link(feature.properties['Padukuhan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Nama</th>\
+                        <td>' + (feature.properties['Nama'] !== null ? autolinker.link(feature.properties['Nama'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_FasilitasKesehatan_10_0() {
+            return {
+                pane: 'pane_FasilitasKesehatan_10',
+                rotationAngle: 0.0,
+                rotationOrigin: 'center center',
+                icon: L.icon({
+                    iconUrl: 'markers/kesehatan.svg',
+                    iconSize: [15.2, 15.2]
+                }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_FasilitasKesehatan_10');
+        map.getPane('pane_FasilitasKesehatan_10').style.zIndex = 410;
+        map.getPane('pane_FasilitasKesehatan_10').style['mix-blend-mode'] = 'normal';
+        var layer_FasilitasKesehatan_10 = new L.geoJson(json_FasilitasKesehatan_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FasilitasKesehatan_10',
+            layerName: 'layer_FasilitasKesehatan_10',
+            pane: 'pane_FasilitasKesehatan_10',
+            onEachFeature: pop_FasilitasKesehatan_10,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_FasilitasKesehatan_10_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_FasilitasKesehatan_10);
+        map.addLayer(layer_FasilitasKesehatan_10);
+        function pop_KantorKapanewonMinggir_11(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Nama</th>\
+                        <td>' + (feature.properties['Nama'] !== null ? autolinker.link(feature.properties['Nama'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_KantorKapanewonMinggir_11_0() {
+            return {
+                pane: 'pane_KantorKapanewonMinggir_11',
+                rotationAngle: 0.0,
+                rotationOrigin: 'center center',
+                icon: L.icon({
+                    iconUrl: 'markers/Kantor Kapanewon.svg',
+                    iconSize: [15.2, 15.2]
+                }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_KantorKapanewonMinggir_11');
+        map.getPane('pane_KantorKapanewonMinggir_11').style.zIndex = 411;
+        map.getPane('pane_KantorKapanewonMinggir_11').style['mix-blend-mode'] = 'normal';
+        var layer_KantorKapanewonMinggir_11 = new L.geoJson(json_KantorKapanewonMinggir_11, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KantorKapanewonMinggir_11',
+            layerName: 'layer_KantorKapanewonMinggir_11',
+            pane: 'pane_KantorKapanewonMinggir_11',
+            onEachFeature: pop_KantorKapanewonMinggir_11,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_KantorKapanewonMinggir_11_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_KantorKapanewonMinggir_11);
+        map.addLayer(layer_KantorKapanewonMinggir_11);
+        function pop_KantorKalurahanSendangagung_12(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Nama</th>\
+                        <td>' + (feature.properties['Nama'] !== null ? autolinker.link(feature.properties['Nama'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_KantorKalurahanSendangagung_12_0() {
+            return {
+                pane: 'pane_KantorKalurahanSendangagung_12',
+                rotationAngle: 0.0,
+                rotationOrigin: 'center center',
+                icon: L.icon({
+                    iconUrl: 'markers/Kantor Kelurahan.svg',
+                    iconSize: [15.2, 15.2]
+                }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_KantorKalurahanSendangagung_12');
+        map.getPane('pane_KantorKalurahanSendangagung_12').style.zIndex = 412;
+        map.getPane('pane_KantorKalurahanSendangagung_12').style['mix-blend-mode'] = 'normal';
+        var layer_KantorKalurahanSendangagung_12 = new L.geoJson(json_KantorKalurahanSendangagung_12, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KantorKalurahanSendangagung_12',
+            layerName: 'layer_KantorKalurahanSendangagung_12',
+            pane: 'pane_KantorKalurahanSendangagung_12',
+            onEachFeature: pop_KantorKalurahanSendangagung_12,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_KantorKalurahanSendangagung_12_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_KantorKalurahanSendangagung_12);
+        map.addLayer(layer_KantorKalurahanSendangagung_12);
+        function pop_FasilitasPendidikan_13(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Id</th>\
+                        <td>' + (feature.properties['Id'] !== null ? autolinker.link(feature.properties['Id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Padukuhan</th>\
+                        <td>' + (feature.properties['Padukuhan'] !== null ? autolinker.link(feature.properties['Padukuhan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Nama</th>\
+                        <td>' + (feature.properties['Nama'] !== null ? autolinker.link(feature.properties['Nama'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_FasilitasPendidikan_13_0() {
+            return {
+                pane: 'pane_FasilitasPendidikan_13',
+                rotationAngle: 0.0,
+                rotationOrigin: 'center center',
+                icon: L.icon({
+                    iconUrl: 'markers/pendidikan.svg',
+                    iconSize: [15.2, 15.2]
+                }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_FasilitasPendidikan_13');
+        map.getPane('pane_FasilitasPendidikan_13').style.zIndex = 413;
+        map.getPane('pane_FasilitasPendidikan_13').style['mix-blend-mode'] = 'normal';
+        var layer_FasilitasPendidikan_13 = new L.geoJson(json_FasilitasPendidikan_13, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FasilitasPendidikan_13',
+            layerName: 'layer_FasilitasPendidikan_13',
+            pane: 'pane_FasilitasPendidikan_13',
+            onEachFeature: pop_FasilitasPendidikan_13,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_FasilitasPendidikan_13_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_FasilitasPendidikan_13);
+        map.addLayer(layer_FasilitasPendidikan_13);
+        function pop_FasilitasRekreasiOlahraga_14(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Id</th>\
+                        <td>' + (feature.properties['Id'] !== null ? autolinker.link(feature.properties['Id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Padukuhan</th>\
+                        <td>' + (feature.properties['Padukuhan'] !== null ? autolinker.link(feature.properties['Padukuhan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Nama_Fasum</th>\
+                        <td>' + (feature.properties['Nama_Fasum'] !== null ? autolinker.link(feature.properties['Nama_Fasum'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_FasilitasRekreasiOlahraga_14_0() {
+            return {
+                pane: 'pane_FasilitasRekreasiOlahraga_14',
+                rotationAngle: 0.0,
+                rotationOrigin: 'center center',
+                icon: L.icon({
+                    iconUrl: 'markers/lapangan3.svg',
+                    iconSize: [15.2, 15.2]
+                }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_FasilitasRekreasiOlahraga_14');
+        map.getPane('pane_FasilitasRekreasiOlahraga_14').style.zIndex = 414;
+        map.getPane('pane_FasilitasRekreasiOlahraga_14').style['mix-blend-mode'] = 'normal';
+        var layer_FasilitasRekreasiOlahraga_14 = new L.geoJson(json_FasilitasRekreasiOlahraga_14, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FasilitasRekreasiOlahraga_14',
+            layerName: 'layer_FasilitasRekreasiOlahraga_14',
+            pane: 'pane_FasilitasRekreasiOlahraga_14',
+            onEachFeature: pop_FasilitasRekreasiOlahraga_14,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_FasilitasRekreasiOlahraga_14_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_FasilitasRekreasiOlahraga_14);
+        map.addLayer(layer_FasilitasRekreasiOlahraga_14);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+            .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+            .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps, { '<img src="legend/FasilitasRekreasiOlahraga_14.png" /> Fasilitas Rekreasi Olahraga': layer_FasilitasRekreasiOlahraga_14, '<img src="legend/FasilitasPendidikan_13.png" /> Fasilitas Pendidikan': layer_FasilitasPendidikan_13, '<img src="legend/KantorKalurahanSendangagung_12.png" /> Kantor Kalurahan Sendangagung': layer_KantorKalurahanSendangagung_12, '<img src="legend/KantorKapanewonMinggir_11.png" /> Kantor Kapanewon Minggir': layer_KantorKapanewonMinggir_11, '<img src="legend/FasilitasKesehatan_10.png" /> Fasilitas Kesehatan': layer_FasilitasKesehatan_10, '<img src="legend/FasilitasKeamanan_9.png" /> Fasilitas Keamanan': layer_FasilitasKeamanan_9, '<img src="legend/FasilitasEkonomi_8.png" /> Fasilitas Ekonomi': layer_FasilitasEkonomi_8, '<img src="legend/MasjidMusholla_7.png" /> Masjid/Musholla': layer_MasjidMusholla_7, '<img src="legend/Gereja_6.png" /> Gereja': layer_Gereja_6, '<img src="legend/BalaiPendopo_5.png" /> Balai Pendopo': layer_BalaiPendopo_5, '<img src="legend/Makam_4.png" /> Makam': layer_Makam_4, '<img src="legend/BatasPadukuhanSendangagung_3.png" /> Batas Padukuhan Sendangagung': layer_BatasPadukuhanSendangagung_3, "Google Earth": layer_GoogleEarth_2, "Google Maps": layer_GoogleMaps_1, "OSM Standard": layer_OSMStandard_0, }, { collapsed: false }).addTo(map);
+        setBounds();
+        resetLabels([layer_BatasPadukuhanSendangagung_3]);
+        map.on("zoomend", function () {
+            resetLabels([layer_BatasPadukuhanSendangagung_3]);
+        });
+        map.on("layeradd", function () {
+            resetLabels([layer_BatasPadukuhanSendangagung_3]);
+        });
+        map.on("layerremove", function () {
+            resetLabels([layer_BatasPadukuhanSendangagung_3]);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1 @@
+var json_KantorKalurahanSendangagung_12 = {"type":"FeatureCollection","name":"KantorKalurahanSendangagung_12","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"Nama":"Kantor Kalurahan Sendangagung"},"geometry":{"type":"Point","coordinates":[110.234783606895633,-7.72701366440184]}}]}

@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+    <link rel="stylesheet" href="css/umkm_style.css">
+    <link rel="stylesheet" href="css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="../../../img/icon-title.png" type="image/png">
+    <title>Peta Sendangagung | Persebaran UMKM</title>
+    <style>
+        #map {
+            width: auto;
+            height: 80vh;
+        }
+    </style>
+</head>
+
+<body>
+    <nav><button id="kembali-button">Kembali</button>
+    </nav>
+    <div class="title">
+        <h1>PETA PERSEBARAN UMKM</h1>
+    </div>
+    <div class="border-map">
+        <div id="map">
+        </div>
+    </div>
+    <div class="footer">
+        &copy; 2024 Desa Sendangagung, Kecamatan Minggir, Kabupaten Sleman
+    </div>
+    <script>
+        document.getElementById("kembali-button").addEventListener("click", function () {
+            history.back();
+        });
+    </script>
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/L.Control.Locate.min.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+    <script src="data/BatasPadukuhanSendangagung_3.js"></script>
+    <script src="data/PersebaranUMKM_4.js"></script>
+    <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl: true, maxZoom: 28, minZoom: 1
+        }).fitBounds([[-7.745728646465159, 110.19936342730095], [-7.7064011906968295, 110.28290740779242]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({ truncate: { length: 30, location: 'smart' } });
+        L.control.locate({ locateOptions: { maxZoom: 19 } }).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_OSMStandard_0');
+        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
+        map.createPane('pane_GoogleMaps_1');
+        map.getPane('pane_GoogleMaps_1').style.zIndex = 401;
+        var layer_GoogleMaps_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleMaps_1',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_GoogleMaps_1;
+        map.addLayer(layer_GoogleMaps_1);
+        map.createPane('pane_GoogleEarth_2');
+        map.getPane('pane_GoogleEarth_2').style.zIndex = 402;
+        var layer_GoogleEarth_2 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleEarth_2',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_GoogleEarth_2;
+        map.addLayer(layer_GoogleEarth_2);
+        function pop_BatasPadukuhanSendangagung_3(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Shape_Leng</th>\
+                        <td>' + (feature.properties['Shape_Leng'] !== null ? autolinker.link(feature.properties['Shape_Leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Shape_Area</th>\
+                        <td>' + (feature.properties['Shape_Area'] !== null ? autolinker.link(feature.properties['Shape_Area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Padukuhan</th>\
+                        <td>' + (feature.properties['Padukuhan'] !== null ? autolinker.link(feature.properties['Padukuhan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_BatasPadukuhanSendangagung_3_0() {
+            return {
+                pane: 'pane_BatasPadukuhanSendangagung_3',
+                opacity: 1,
+                color: 'rgba(45,245,72,1.0)',
+                dashArray: '10,5',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(164,113,88,0.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BatasPadukuhanSendangagung_3');
+        map.getPane('pane_BatasPadukuhanSendangagung_3').style.zIndex = 403;
+        map.getPane('pane_BatasPadukuhanSendangagung_3').style['mix-blend-mode'] = 'normal';
+        var layer_BatasPadukuhanSendangagung_3 = new L.geoJson(json_BatasPadukuhanSendangagung_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BatasPadukuhanSendangagung_3',
+            layerName: 'layer_BatasPadukuhanSendangagung_3',
+            pane: 'pane_BatasPadukuhanSendangagung_3',
+            onEachFeature: pop_BatasPadukuhanSendangagung_3,
+            style: style_BatasPadukuhanSendangagung_3_0,
+        });
+        bounds_group.addLayer(layer_BatasPadukuhanSendangagung_3);
+        map.addLayer(layer_BatasPadukuhanSendangagung_3);
+        function pop_PersebaranUMKM_4(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Pemilik</th>\
+                        <td>' + (feature.properties['Pemilik'] !== null ? autolinker.link(feature.properties['Pemilik'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Brand</th>\
+                        <td>' + (feature.properties['Brand'] !== null ? autolinker.link(feature.properties['Brand'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Jenis</th>\
+                        <td>' + (feature.properties['Jenis'] !== null ? autolinker.link(feature.properties['Jenis'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Produk</th>\
+                        <td>' + (feature.properties['Produk'] !== null ? autolinker.link(feature.properties['Produk'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Kontak</th>\
+                        <td>' + (feature.properties['Kontak'] !== null ? autolinker.link(feature.properties['Kontak'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Situs</th>\
+                        <td>' + (feature.properties['Situs'] !== null ? autolinker.link(feature.properties['Situs'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Alamat</th>\
+                        <td>' + (feature.properties['Alamat'] !== null ? autolinker.link(feature.properties['Alamat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, { maxHeight: 400 });
+        }
+
+        function style_PersebaranUMKM_4_0() {
+            return {
+                pane: 'pane_PersebaranUMKM_4',
+                rotationAngle: 0.0,
+                rotationOrigin: 'center center',
+                icon: L.icon({
+                    iconUrl: 'markers/UMKM.svg',
+                    iconSize: [15.2, 15.2]
+                }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_PersebaranUMKM_4');
+        map.getPane('pane_PersebaranUMKM_4').style.zIndex = 404;
+        map.getPane('pane_PersebaranUMKM_4').style['mix-blend-mode'] = 'normal';
+        var layer_PersebaranUMKM_4 = new L.geoJson(json_PersebaranUMKM_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PersebaranUMKM_4',
+            layerName: 'layer_PersebaranUMKM_4',
+            pane: 'pane_PersebaranUMKM_4',
+            onEachFeature: pop_PersebaranUMKM_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_PersebaranUMKM_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_PersebaranUMKM_4);
+        map.addLayer(layer_PersebaranUMKM_4);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+            .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+            .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps, { '<img src="legend/PersebaranUMKM_4.png" /> Persebaran UMKM': layer_PersebaranUMKM_4, '<img src="legend/BatasPadukuhanSendangagung_3.png" /> Batas Padukuhan Sendangagung': layer_BatasPadukuhanSendangagung_3, "Google Earth": layer_GoogleEarth_2, "Google Maps": layer_GoogleMaps_1, "OSM Standard": layer_OSMStandard_0, }, { collapsed: false }).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_BatasPadukuhanSendangagung_3.eachLayer(function (layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Padukuhan'] !== null ? String('<div style="color: #ffffff; font-size: 7pt; font-family: \'Cambria\', sans-serif;">' + layer.feature.properties['Padukuhan']) + '</div>' : ''), { permanent: true, offset: [-0, -16], className: 'css_BatasPadukuhanSendangagung_3' });
+            labels.push(layer);
+            totalMarkers += 1;
+            layer.added = true;
+            addLabel(layer, i);
+            i++;
+        });
+        resetLabels([layer_BatasPadukuhanSendangagung_3]);
+        map.on("zoomend", function () {
+            resetLabels([layer_BatasPadukuhanSendangagung_3]);
+        });
+        map.on("layeradd", function () {
+            resetLabels([layer_BatasPadukuhanSendangagung_3]);
+        });
+        map.on("layerremove", function () {
+            resetLabels([layer_BatasPadukuhanSendangagung_3]);
+        });
+    </script>
+</body>
+
+</html>
