@@ -9,7 +9,7 @@
 }
 
 body {
-  background: url(../../../../img/darker-background.png) no-repeat center center
+  background: url(../../../img/darker-background.png) no-repeat center center
     fixed;
   background-size: cover;
   width: 100vw;
